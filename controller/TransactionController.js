@@ -103,11 +103,33 @@ const PriceRangeData = async (req, res) => {
   }
 };
 
+const CatagoryData = async (req, res) => {
+  try {
+    const month = parseInt(req.query.month);
+
+    const CatagoryCounts = await Product.aggregate([
+      { $match: { $expr: { $eq: [{ $month: "$dateOfSale" }, month] } } },
+      { $group: { _id: "$category", count: { $sum: 1 } } },
+    ]);
+
+    const pieChartData = {};
+    CatagoryCounts.forEach((category) => {
+      pieChartData[category._id] = category.count;
+    });
+    console.log(pieChartData);
+    return pieChartData;
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 const FetchAllData = async (req, res) => {
   try {
     const stats = await Statistics(req, res);
     const priceRange = await PriceRangeData(req, res);
-    res.status(200).json({ stats, priceRange });
+    const PieCatagoryData = await CatagoryData(req, res);
+    res.status(200).json({ stats, priceRange, PieCatagoryData });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal server error" });
