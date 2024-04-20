@@ -82,12 +82,21 @@ const PriceRangeData = async (req, res) => {
       });
       priceRangeCounts[range.range] = count;
     }
-    const totalCount = Object.values(priceRangeCounts).reduce(
-      (total, count) => total + count,
-      0
-    );
 
-    return { priceRangeCounts, totalCount };
+    // const totalCount = Object.values(priceRangeCounts).reduce(
+    //   (total, count) => total + count,
+    //   0
+    // );
+
+    // const priceRangePercentage = {};
+    // for (const range in priceRangeCounts) {
+    //   priceRangePercentage[range] =
+    //     (priceRangeCounts[range] / totalCount) * 100;
+    // }
+
+    // console.log(priceRangePercentage);
+
+    return priceRangeCounts;
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal server error" });
